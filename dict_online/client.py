@@ -67,20 +67,21 @@ class OnlineDictClient():
                 print("用户名或密码错误，请重新输入！")
     # 二级界面
     def dict(self,name):
-        print("""
-         =======Online Dict=======
-               1.英语单词查询
-               2.历史记录查看
-               3.注销
-         =========================
-        """)
-        cmd=input("请输入选项：")
-        if cmd == "1":  # 查询
-            self.search(name)
-        elif cmd == "2":  # 历史记录
-            self.history(name)
-        elif cmd == "3":  # 退出
-            return
+        while True:
+            print("""
+             =======Online Dict=======
+                   1.英语单词查询
+                   2.历史记录查看
+                   3.注销
+             =========================
+            """)
+            cmd=input("请输入选项：")
+            if cmd == "1":  # 查询
+                self.search(name)
+            elif cmd == "2":  # 历史记录
+                self.history(name)
+            elif cmd == "3":  # 退出
+                return
     def search(self,name):
         self.socketclient.send(("S %s"%name).encode())
         while True:
@@ -95,7 +96,9 @@ class OnlineDictClient():
             else:
                 print(explain.decode())
     def history(self,name):
-        pass
+        self.socketclient.send(("H %s"%name).encode())
+        history=self.socketclient.recv(2048)
+        print("您的历史记录：\n",history.decode())
 if __name__=="__main__":
     client=OnlineDictClient()
     client.mian()

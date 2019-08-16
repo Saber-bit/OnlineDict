@@ -56,14 +56,14 @@ class DataBase():
         if explain:
             return explain[0]
     def history(self,name):
-        sql = "select * from history where name='%s' order by searchtime desc limit 10"
+        sql = "select * from history where name=%s order by searchtime desc limit 10"
         self.cur.execute(sql,[name])
         records=self.cur.fetchall()
-        str=""
+        str_=""
         for record in records:
-            str+=" ".join(record)
-        return str
+            str_+=(str(record)+"\n")
+        return str_
 if __name__=="__main__":
     db=DataBase()
-    res=db.search("lei","student")
+    res=db.history("lei")
     print(res)

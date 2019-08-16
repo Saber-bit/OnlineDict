@@ -15,7 +15,7 @@ class OnlineDictServer():
         self.socketfd.bind(self.ADDR)
         self.socketfd.listen(5)
         self.socketfd.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
-        # signal(SO,SIG_IGN)
+        signal(SIGCHLD,SIG_IGN)
     def main(self):
         while True:
             try:
@@ -28,7 +28,7 @@ class OnlineDictServer():
     def handle(self,client):
         while True:
             request=client.recv(1024).decode()
-            if not request[0] or request[0]=="E":
+            if not request or request[0]=="E":
                 sys.exit(0)
             elif request[0] == "R":
                 self.regist(client,request)
@@ -66,7 +66,11 @@ class OnlineDictServer():
                 client.send(b"404")
     def history(self,client,request):
         name=request.split(" ")[-1]
-
+        records=self.db.history(name)
+        if records:
+            client.send(records.encode())
+        else:
+            client.send(("%s have no search history"%name).encode())
 if __name__=="__main__":
     server=OnlineDictServer()
     server.main()

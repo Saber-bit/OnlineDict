@@ -4,11 +4,12 @@ from getpass import getpass
 import sys
 
 class OnlineDictClient():
+    # 客户端连接套接字初始化
     def __init__(self):
         self.ADDR=("127.0.0.1",5200) #服务器地址
         self.socketclient=socket()
         self.socketclient.connect(self.ADDR)
-    # 主界面
+    # 登录注册(一级界面)
     def mian(self):
         while True:
             print("""
@@ -26,13 +27,14 @@ class OnlineDictClient():
                 self.login()
             elif cmd=="3": # 退出
                 sys.exit("谢谢使用！")
+    # 用户注册
     def regist(self):
         while True:
             name=input("请输入名称：")
-            pwd=input("请输入密码：")
-            pwdc=input("请再次确认密码：")
-            # pwd=getpass()
-            # pwdc=getpass("Again:")
+            # pwd=input("请输入密码：")
+            # pwdc=input("请再次确认密码：")
+            pwd=getpass()
+            pwdc=getpass("Again:")
             if pwd!=pwdc:
                 print("输入密码不一致")
                 continue
@@ -47,13 +49,14 @@ class OnlineDictClient():
                 break
             else:
                 print("注册失败，用户名已存在！")
+    # 用户登录
     def login(self):
         while True:
-            # print("""
-            # =======Online Dict=======
-            #        用户登录界面
-            # =========================
-            # """)
+            print("""
+            =======Online Dict=======
+                   用户登录界面
+            =========================
+            """)
             name = input("请输入您的名称：")
             pwd = input("请输入您的密码：")
             s="L %s %s"%(name,pwd)
@@ -65,7 +68,7 @@ class OnlineDictClient():
                 break
             else:
                 print("用户名或密码错误，请重新输入！")
-    # 二级界面
+    # 主要功能界面：查询，历史记录(二级界面)
     def dict(self,name):
         while True:
             print("""
@@ -82,6 +85,7 @@ class OnlineDictClient():
                 self.history(name)
             elif cmd == "3":  # 退出
                 return
+    # 查询
     def search(self,name):
         self.socketclient.send(("S %s"%name).encode())
         while True:
@@ -95,6 +99,7 @@ class OnlineDictClient():
                 print("无此单词")
             else:
                 print(explain.decode())
+    # 历史记录查看
     def history(self,name):
         self.socketclient.send(("H %s"%name).encode())
         history=self.socketclient.recv(2048)

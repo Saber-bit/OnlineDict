@@ -40,3 +40,31 @@
 
 确定多并发方案，应对多个用户登录情况，可行方案主要有多进程、多线程、多路IO复用
 
+| 方案       | 实现方法                                                     |
+| ---------- | ------------------------------------------------------------ |
+| 多进程     | os模块fork()实现多进程：<br/>multiprocessing模块Process实现多进程：<br/>1.为单独的入口函数开辟单独进程<br/>2.自定义进程类，run定义启动函数，可以将共同使用的数据封装为类实例变量 |
+| 多线程     | multiprocessing模块Tread实现多进程：<br/>1.与Process进程模块使用方法相同<br/>2.注意区别python线程和进程的区别 |
+| IO多路复用 |                                                              |
+
+
+
+```mermaid
+graph TD
+​    client1-->|read / write|SVN((SVN server))
+​    client2-->|read only|SVN
+​    client3-->|read / write|SVN
+​    client4-->|read only|SVN
+​    client5(...)-->SVN
+​    SVN---|store the data|sharedrive
+```
+
+
+
+
+
+
+
+
+
+
+

@@ -2,9 +2,10 @@ from socket import *
 import pymysql
 from multiprocessing import *
 from signal import *
-from dboperate import  *
+from db_operate import  *
 import sys
 class OnlineDictServer():
+    # 数据库对象，监听套接字初始化
     def __init__(self):
         # 数据库对象调用
         self.db=DataBase()
@@ -16,6 +17,7 @@ class OnlineDictServer():
         self.socketfd.listen(5)
         self.socketfd.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
         signal(SIGCHLD,SIG_IGN)
+    # 循环监听，分配子进程
     def main(self):
         while True:
             try:
@@ -25,6 +27,7 @@ class OnlineDictServer():
                 print("服务器退出！")
             client=Process(target=self.handle,args=(conn,))
             client.start()
+    # 子进程处理主逻辑，解析客户端请求内容
     def handle(self,client):
         while True:
             request=client.recv(1024).decode()
@@ -38,6 +41,7 @@ class OnlineDictServer():
                 self.search(client,request)
             elif request[0] == "H":
                 self.history(client,request)
+    # 用户注册逻辑处理
     def regist(self, client,request):
         name=request.split(" ")[1]
         pwd=request.split(" ")[-1]
@@ -45,6 +49,7 @@ class OnlineDictServer():
             client.send(b"OK")
         else:
             client.send(b"name exist")
+    # 用户登录逻辑处理
     def login(self,client,info_log):
         name = info_log.split(" ")[1]
         pwd = info_log.split(" ")[-1]
@@ -53,6 +58,7 @@ class OnlineDictServer():
             client.send(b"OK")
         else:
             client.send(b"incorrect")
+    # 用户查询字典逻辑处理
     def search(self,client,request):
         name=request.split(" ")[-1]
         while True:
@@ -64,6 +70,7 @@ class OnlineDictServer():
                 client.send(explain.encode())
             else:
                 client.send(b"404")
+    # 用户查看历史记录逻辑处理
     def history(self,client,request):
         name=request.split(" ")[-1]
         records=self.db.history(name)
